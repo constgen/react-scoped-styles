@@ -18,10 +18,13 @@ export default function scriptLoader(this: LoaderContext, source: string): strin
         return classExpr.replace(classStringRegex, (_match, classNames) => {
             const uniqueClassNames = classNames.split(' ')
                 .map((className: string) => {
+                    const uniquePrefix = `${dirName}-${dirHash}`
+                    const uniqueClassName = `${uniquePrefix}-${className}`;
                     const containsPrefix = className.startsWith(`${globalsPrefix}-`);
-                    const uniqueClassName = `${dirName}-${dirHash}-${className}`;
+                    const hasUniqueName = className.startsWith(uniquePrefix);
+                    const needsUniqueName = !(containsPrefix || hasUniqueName);
 
-                    return containsPrefix ? className : uniqueClassName;
+                    return needsUniqueName ? uniqueClassName : className;
                 })
                 .join(' ');
 
